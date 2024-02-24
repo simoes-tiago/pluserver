@@ -1,13 +1,11 @@
 package domain
 
-import (
-	"github.com/google/uuid"
-)
-
 type User struct {
-	ID      uuid.UUID `gorm:"primaryKey"`
-	Phone   string    `gorm:"unique"`
-	Name    string
-	Country string
-	Age     int
+	ID       int64    `json:",omitempty" gorm:"primaryKey;autoincrement"`
+	Username string   `gorm:"unique;not null;default:null"`
+	Phone    string   `json:",omitempty"`
+	Name     string   `json:",omitempty"`
+	Country  string   `json:",omitempty"`
+	Age      int      `json:",omitempty"`
+	Account  *Account `json:",omitempty"`
 }

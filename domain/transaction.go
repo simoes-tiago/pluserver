@@ -1,15 +1,14 @@
 package domain
 
 import (
-	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Transaction struct {
-	ID                   uuid.UUID `gorm:"primaryKey"`
-	OriginAccountID      uuid.UUID
+	gorm.Model
+	OriginAccountID      int64
 	OriginAccount        Account `gorm:"foreignKey:OriginAccountID;references:ID"`
-	DestinationAccountID uuid.UUID
+	DestinationAccountID int64
 	DestinationAccount   Account `gorm:"foreignKey:DestinationAccountID;references:ID"`
-	creatAt              uuid.Time
 	Amount               float32
 }

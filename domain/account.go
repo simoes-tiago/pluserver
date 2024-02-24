@@ -1,12 +1,7 @@
 package domain
 
-import (
-	"github.com/google/uuid"
-)
-
 type Account struct {
-	ID      uuid.UUID `gorm:"primaryKey"`
-	UserID  uuid.UUID
-	User    User `gorm:"foreignKey:UserID;references:ID"`
+	ID      int64 `gorm:"primaryKey"`
+	UserID  int64
 	Balance float32
 }

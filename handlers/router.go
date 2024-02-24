@@ -4,9 +4,16 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"net/http"
+	"pluserver/service"
 )
 
-func InitRouter() *chi.Mux {
+type handler struct {
+	svc service.Service
+}
+
+func InitRouter(svc service.Service) *chi.Mux {
+	h := handler{svc}
+
 	router := chi.NewRouter()
 	// Apply middleware
 	router.Use(middleware.Logger)
@@ -18,19 +25,12 @@ func InitRouter() *chi.Mux {
 	})
 
 	router.Route("/users", func(u chi.Router) {
-		u.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-
-		})
-		u.Post("/", func(writer http.ResponseWriter, request *http.Request) {
-
-		})
-		u.Delete("/", func(writer http.ResponseWriter, request *http.Request) {
-
-		})
-		u.Route("/{id}", func(r chi.Router) {
-			r.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-				writer.Write([]byte("Hello, hello!"))
-			})
+		u.Get("/", h.GetAllUsers)
+		u.Post("/", h.CreateUser)
+		u.Route("/{user}", func(r chi.Router) {
+			r.Get("/", h.GetUser)
+			r.Delete("/", h.DeleteUser)
+			r.Patch("/", h.UpdateUser)
 		})
 	})
 
