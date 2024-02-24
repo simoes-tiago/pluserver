@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-	log.Println("This will be a server")
 
 	router := handlers.InitRouter()
 	// Start the server
