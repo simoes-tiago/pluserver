@@ -10,5 +10,4 @@ type User struct {
 	Name    string
 	Country string
 	Age     int
-	Account Account
 }
