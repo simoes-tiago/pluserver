@@ -5,7 +5,7 @@ import (
 )
 
 type Transaction struct {
-	ID                 uuid.UUID
+	ID                 uuid.UUID `gorm:"primaryKey"`
 	OriginAccount      uuid.UUID
 	DestinationAccount uuid.UUID
 	creatAt            uuid.Time

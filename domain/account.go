@@ -5,7 +5,7 @@ import (
 )
 
 type Account struct {
-	ID          uuid.UUID
+	ID          uuid.UUID `gorm:"primaryKey"`
 	Transaction Transaction
 	Balance     float32
 }

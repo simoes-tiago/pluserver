@@ -5,7 +5,8 @@ import (
 )
 
 type User struct {
-	ID      uuid.UUID
+	ID      uuid.UUID `gorm:"primaryKey"`
+	Phone   string    `gorm:"unique"`
 	Name    string
 	Country string
 	Age     int
