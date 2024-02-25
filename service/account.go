@@ -36,3 +36,9 @@ func (s *Service) GetAccount(id int64) *domain.Account {
 
 	return &result
 }
+
+func (s *Service) UpdateAccount(account *domain.Account) error {
+	result := s.db.Updates(account)
+
+	return result.Error
+}

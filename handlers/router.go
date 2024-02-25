@@ -35,17 +35,14 @@ func InitRouter(svc service.Service) *chi.Mux {
 	})
 
 	router.Route("/transactions", func(t chi.Router) {
-		t.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-
-		})
-		t.Post("/", func(writer http.ResponseWriter, request *http.Request) {
-
-		})
-		t.Delete("/", func(writer http.ResponseWriter, request *http.Request) {
-
-		})
+		t.Get("/", h.GetAllTransactions)
+		t.Post("/deposit", h.CreateDeposit)
+		t.Post("/withdraw", h.CreateWithdraw)
+		t.Post("/transfer", h.CreateTransfer)
 		t.Route("/{id}", func(r chi.Router) {
-
+			r.Get("/", h.GetTransaction)
+			r.Delete("/", h.DeleteTransaction)
+			r.Patch("/", h.UpdateTransaction)
 		})
 	})
 

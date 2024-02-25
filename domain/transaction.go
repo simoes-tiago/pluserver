@@ -4,11 +4,21 @@ import (
 	"gorm.io/gorm"
 )
 
+type TransactionType int
+
+const (
+	Transfer TransactionType = iota
+	Deposit
+	Withdraw
+)
+
 type Transaction struct {
 	gorm.Model
-	OriginAccountID      int64
+	ID                   uint    `gorm:"primaryKey;autoincrement"`
+	OriginAccountID      *int64  `json:"origin-account-id"`
 	OriginAccount        Account `gorm:"foreignKey:OriginAccountID;references:ID"`
-	DestinationAccountID int64
+	DestinationAccountID *int64  `json:"destination-account-id"`
 	DestinationAccount   Account `gorm:"foreignKey:DestinationAccountID;references:ID"`
 	Amount               float32
+	Type                 TransactionType
 }
