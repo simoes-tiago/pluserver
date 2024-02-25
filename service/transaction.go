@@ -2,61 +2,66 @@ package service
 
 import (
 	"errors"
+	"gorm.io/gorm"
 	"pluserver/domain"
 )
 
 func (s *Service) CreateTransaction(transaction domain.Transaction) error {
-	if transaction.DestinationAccountID == nil {
-		return errors.New("missing destination-account-id")
-	}
-	destAccount := s.GetAccount(*transaction.DestinationAccountID)
-	if destAccount == nil {
-		return errors.New("invalid destination-account-id")
-	}
-	switch transaction.Type {
-	case domain.Withdraw:
-		if destAccount.Balance-transaction.Amount >= 0 && transaction.Amount > 0 {
-			destAccount.Balance -= transaction.Amount
-		} else {
-			return errors.New("invalid amount")
-		}
+	return s.db.Transaction(func(tx *gorm.DB) error {
 
-	case domain.Deposit:
-		if transaction.Amount > 0 {
-			destAccount.Balance += transaction.Amount
-		} else {
-			return errors.New("invalid amount")
-		}
-	case domain.Transfer:
-		if transaction.OriginAccountID == nil {
+		var destAccount, origAccount *domain.Account
+		if transaction.DestinationAccountID == nil {
 			return errors.New("missing destination-account-id")
 		}
-		origAccount := s.GetAccount(*transaction.DestinationAccountID)
-		if origAccount == nil {
-			return errors.New("invalid origin-account-id")
-		}
-		if origAccount.Balance-transaction.Amount >= 0 && transaction.Amount > 0 {
-			origAccount.Balance -= transaction.Amount
-			destAccount.Balance += transaction.Amount
-			err := s.UpdateAccount(origAccount)
-			if err != nil {
-				return err
-			}
-		} else {
-			return errors.New("invalid amount")
-		}
-	}
-	result := s.db.Create(&transaction)
-	if result.Error != nil {
-		return result.Error
-	}
-	err := s.UpdateAccount(destAccount)
-	if err != nil {
-		s.DeleteTransaction(transaction.ID)
-		return err
-	}
 
-	return result.Error
+		destAccount = s.GetAccount(tx, *transaction.DestinationAccountID)
+		if destAccount == nil {
+			return errors.New("invalid destination-account-id")
+		}
+		switch transaction.Type {
+		case domain.Withdraw:
+			if destAccount.Balance-transaction.Amount >= 0 && transaction.Amount > 0 {
+				destAccount.Balance -= transaction.Amount
+			} else {
+				return errors.New("invalid amount")
+			}
+
+		case domain.Deposit:
+			if transaction.Amount > 0 {
+				destAccount.Balance += transaction.Amount
+			} else {
+				return errors.New("invalid amount")
+			}
+		case domain.Transfer:
+			if transaction.OriginAccountID == nil {
+				return errors.New("missing destination-account-id")
+			}
+			origAccount = s.GetAccount(tx, *transaction.DestinationAccountID)
+			if origAccount == nil {
+				return errors.New("invalid origin-account-id")
+			}
+			if origAccount.Balance-transaction.Amount >= 0 && transaction.Amount > 0 {
+				origAccount.Balance -= transaction.Amount
+				destAccount.Balance += transaction.Amount
+				err := s.UpdateAccount(tx, origAccount)
+				if err != nil {
+					return err
+				}
+			} else {
+				return errors.New("invalid amount")
+			}
+		}
+		result := tx.Create(&transaction)
+		if result.Error != nil {
+			return result.Error
+		}
+		err := s.UpdateAccount(tx, destAccount)
+		if err != nil {
+			return err
+		}
+
+		return result.Error
+	})
 }
 
 func (s *Service) DeleteTransaction(id uint) error {

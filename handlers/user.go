@@ -19,7 +19,7 @@ func (h *handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GetUser(w http.ResponseWriter, r *http.Request) {
-	user := h.svc.GetUser(chi.URLParam(r, "user"))
+	user := h.svc.GetUser(nil, chi.URLParam(r, "user"))
 
 	if user.Username == "" {
 		http.Error(w, "not found", http.StatusNotFound)
@@ -48,7 +48,7 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	err := h.svc.DeleteUser(chi.URLParam(r, "user"))
+	err := h.svc.DeleteUser(nil, chi.URLParam(r, "user"))
 	if err != nil {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -63,7 +63,7 @@ func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "bad input", http.StatusUnprocessableEntity)
 		return
 	}
-	err := h.svc.UpdateUser(chi.URLParam(r, "user"), user)
+	err := h.svc.UpdateUser(nil, chi.URLParam(r, "user"), user)
 	if err != nil {
 		http.Error(w, "not found", http.StatusNotFound)
 		return

@@ -1,19 +1,27 @@
 package service
 
 import (
+	"gorm.io/gorm"
 	"log"
 	"pluserver/domain"
 )
 
-func (s *Service) CreateAccount(user int64) *domain.Account {
-	result := s.db.Create(&domain.Account{
+func (s *Service) CreateAccount(externalTx *gorm.DB, user int64) *domain.Account {
+	var tx *gorm.DB
+	if externalTx == nil {
+		tx = s.db
+	} else {
+		tx = externalTx
+	}
+
+	result := tx.Create(&domain.Account{
 		UserID: user,
 	})
 	if result.Error != nil {
 		log.Printf("error creating account %v", result.Error)
 		return nil
 	}
-	return s.GetAccount(user)
+	return s.GetAccount(tx, user)
 }
 
 func (s *Service) DeleteAccount(id int64) error {
@@ -28,17 +36,34 @@ func (s *Service) DeleteAccount(id int64) error {
 	return nil
 }
 
-func (s *Service) GetAccount(id int64) *domain.Account {
+func (s *Service) GetAccount(externalTx *gorm.DB, id int64) *domain.Account {
+	var tx *gorm.DB
+	if externalTx == nil {
+		tx = s.db
+	} else {
+		tx = externalTx
+	}
+
 	var result domain.Account
-	s.db.
+	tx.
 		Where("user_id = ?", &id).
 		First(&result, id)
 
+	if result.ID == 0 {
+		return nil
+	}
 	return &result
 }
 
-func (s *Service) UpdateAccount(account *domain.Account) error {
-	result := s.db.Updates(account)
+func (s *Service) UpdateAccount(externalTx *gorm.DB, account *domain.Account) error {
+	var tx *gorm.DB
+	if externalTx == nil {
+		tx = s.db
+	} else {
+		tx = externalTx
+	}
+
+	result := tx.Updates(account)
 
 	return result.Error
 }
