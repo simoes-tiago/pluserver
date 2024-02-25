@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/go-chi/chi"
 	"log"
 	"net/http"
@@ -44,7 +43,11 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
+	b, err := json.Marshal(user)
+	if err != nil {
+		log.Println("error marshaling user:", err)
+	}
+	w.Write(b)
 }
 
 func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request) {

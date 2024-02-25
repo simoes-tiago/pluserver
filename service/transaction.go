@@ -34,9 +34,9 @@ func (s *Service) CreateTransaction(transaction domain.Transaction) error {
 			}
 		case domain.Transfer:
 			if transaction.OriginAccountID == nil {
-				return errors.New("missing destination-account-id")
+				return errors.New("missing origin-account-id")
 			}
-			origAccount = s.GetAccount(tx, *transaction.DestinationAccountID)
+			origAccount = s.GetAccount(tx, *transaction.OriginAccountID)
 			if origAccount == nil {
 				return errors.New("invalid origin-account-id")
 			}
@@ -92,7 +92,9 @@ func (s *Service) GetTransaction(id uint) domain.Transaction {
 
 func (s *Service) GetAllTransactions() []domain.Transaction {
 	var result []domain.Transaction
-	s.db.Find(&result)
+	s.db.
+		Preload("Accounts").
+		Find(&result)
 
 	return result
 }

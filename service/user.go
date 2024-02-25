@@ -72,6 +72,7 @@ func (s *Service) GetUser(externalTx *gorm.DB, user string) domain.User {
 	var result domain.User
 	tx.
 		Where("username = ?", &user).
+		Preload("Transactions").
 		Preload("Account").
 		First(&result)
 
@@ -80,7 +81,10 @@ func (s *Service) GetUser(externalTx *gorm.DB, user string) domain.User {
 
 func (s *Service) GetAllUser() []domain.User {
 	var result []domain.User
-	s.db.Find(&result)
+	s.db.
+		Preload("Transactions").
+		Preload("Account").
+		Find(&result)
 
 	return result
 }

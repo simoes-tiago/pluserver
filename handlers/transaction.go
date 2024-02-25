@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/go-chi/chi"
 	"log"
 	"net/http"
@@ -82,7 +81,12 @@ func (h *handler) CreateTransfer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
+
+	b, err := json.Marshal(transaction)
+	if err != nil {
+		log.Println("error marshaling transaction:", err)
+	}
+	w.Write(b)
 }
 
 func (h *handler) CreateDeposit(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +101,12 @@ func (h *handler) CreateDeposit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
+
+	b, err := json.Marshal(transaction)
+	if err != nil {
+		log.Println("error marshaling transaction:", err)
+	}
+	w.Write(b)
 }
 
 func (h *handler) CreateWithdraw(w http.ResponseWriter, r *http.Request) {
@@ -112,5 +121,9 @@ func (h *handler) CreateWithdraw(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
+	b, err := json.Marshal(transaction)
+	if err != nil {
+		log.Println("error marshaling transaction:", err)
+	}
+	w.Write(b)
 }
