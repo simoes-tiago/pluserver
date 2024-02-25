@@ -44,7 +44,7 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", user)))
+	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
 }
 
 func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request) {

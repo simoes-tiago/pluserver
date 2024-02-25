@@ -82,7 +82,7 @@ func (h *handler) CreateTransfer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", transaction)))
+	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
 }
 
 func (h *handler) CreateDeposit(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +97,7 @@ func (h *handler) CreateDeposit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", transaction)))
+	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
 }
 
 func (h *handler) CreateWithdraw(w http.ResponseWriter, r *http.Request) {
@@ -112,5 +112,5 @@ func (h *handler) CreateWithdraw(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("created %v", transaction)))
+	w.Write([]byte(fmt.Sprintf("created %v", r.Body)))
 }
