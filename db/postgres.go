@@ -8,8 +8,8 @@ import (
 )
 
 func InitDB() (*gorm.DB, error) {
-	//dsn := "host=db user=user dbname=mydb port=5432"
-	dsn := "host=localhost user=user dbname=mydb port=5432"
+	dsn := "host=db user=user dbname=mydb port=5432"
+	//dsn := "host=localhost user=user dbname=mydb port=5432"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
